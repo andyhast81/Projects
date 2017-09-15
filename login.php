@@ -26,7 +26,7 @@ require_once('inc/class.user.php');
 			$user->redirect('index.php');
 
 		}else{
-			$error = "The email or username and password entered were incorrect.";
+			$errors[] = "The email/username and/or password entered were incorrect.";
 		}	
 	}
 ?>
