@@ -92,7 +92,7 @@ $user_id = $_SESSION['user_session'];
 					echo '<td>'.$result['user_name'].'</td>';
 					echo '<td>'.$result['user_email'].'</td>';
 					$tempacc = $result['user_access'];
-					if($tempacc == 0){$tName = 'Basic';}else{$tName = 'Admin';}
+					if($tempacc == 1){$tName = 'Basic';}else{$tName = 'Admin';}
 					echo '<td>'.$tName.'</td>';
 					echo '<td><button data-uid="'.$uid.'" type="button" class="btn btn-primary">Edit</button></td>';
 					echo '</tr>';
