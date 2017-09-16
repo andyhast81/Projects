@@ -47,6 +47,53 @@ class USER{
 		}				
 	}
 
+	public function updateUser($uid,$fname,$lname,$uname,$umail,$upass,$uaccess){
+		try{
+			if($upass != ''){
+				$options = [
+			    'cost' => 11,
+				];
+				$new_password = password_hash($upass, PASSWORD_DEFAULT,$options);
+				$stmt = $this->conn->prepare("UPDATE users SET first_name=:fname, last_name=:lname,user_name=:uname,user_email=:umail,user_pass=:upass,user_access=:uaccess 
+					WHERE user_id=:uid");
+			}else{
+				$stmt = $this->conn->prepare("UPDATE users SET first_name=:fname, last_name=:lname,user_name=:uname,user_email=:umail,user_access=:uaccess 
+					WHERE user_id=:uid");
+			}
+			
+			$stmt->bindparam(":fname", $fname);
+			$stmt->bindparam(":lname", $lname);
+			$stmt->bindparam(":uname", $uname);
+			$stmt->bindparam(":umail", $umail);
+			if($upass != ''){
+				$stmt->bindparam(":upass", $new_password);
+			}									  
+			$stmt->bindparam(":uaccess", $uaccess);	
+			$stmt->bindparam(":uid", $uid);
+			$stmt->execute();	
+			
+			return $stmt;
+
+		}
+		catch(PDOException $e){
+			echo $e->getMessage();
+		}	
+	}
+
+	public function deleteUser($uid){
+		try{
+
+			$stmt = $this->conn->prepare("DELETE FROM users WHERE user_id=:uid");
+			$stmt->bindparam(":uid", $uid);
+			$stmt->execute();	
+			
+			return $stmt;			
+		}
+		catch(PDOException $e){
+			echo $e->getMessage();
+		}
+	}
+
 	public function doLogin($umail,$upass){
 		try{
 			$stmt = $this->conn->prepare("SELECT user_id, user_email, user_pass, user_access FROM users WHERE user_email=:umail ");

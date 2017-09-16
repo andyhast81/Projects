@@ -26,7 +26,7 @@ require_once('inc/class.user.php');
 			$user->redirect('index.php');
 
 		}else{
-			$errors[] = "The email/username and/or password entered were incorrect.";
+			$error = "The email or username and password entered were incorrect.";
 		}	
 	}
 ?>
@@ -50,7 +50,7 @@ require_once('inc/class.user.php');
     <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->

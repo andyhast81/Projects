@@ -1,19 +1,50 @@
 body {
   padding-bottom: 40px;
   padding-top: 50px;
-  background-color: #eee;
+  /*background-color: #1b1b1b;*/
 }
-.starter-template {
-  padding: 40px 15px; 
-  text-align: center;
+.upload-drop-zone {
+  height: 200px;
+  border-width: 2px;
+  margin-bottom: 20px;
+}
+
+/* skin.css Style*/
+.upload-drop-zone {
+  color: #ccc;
+  border-style: dashed;
+  border-color: #ccc;
+  line-height: 200px;
+  text-align: center
+}
+.upload-drop-zone.drop {
+  color: #222;
+  border-color: #222;
+}
+h1, .h1, h2, .h2, h3, .h3 {
+    /*color: white;*/
+}
+.btn a{
+  color: white; 
+}
+
+#pro_pipe table{
+  /*background-color: white;*/
+  /*border: 1px solid #4da7f5;*/
+}
+#pro_pipe table td{
+  /*border: 1px solid #4da7f5;*/
+}
+#pro_pipe thead{
+  background-color: black;
+  color: white;
 }
 .form-signin {
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
 }
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
+.form-signin .form-signin-heading,.form-signin .checkbox {
   margin-bottom: 10px;
 }
 .form-signin .checkbox {

@@ -5,19 +5,21 @@ require_once('inc/class.user.php');
   }
 $user = new USER();
 $user_id = $_SESSION['user_session'];
-  if(!$user->is_admin($user_id)){
-    $user->redirect('index.php');
-  };
-
+if(!$user->is_admin($user_id) || !$user->is_loggedin()){
+  $user->redirect('index.php');
+}
+if($user->is_admin($user_id)){
+  $admin = true;
+};
 
 if(filter_has_var(INPUT_POST,'submit')){
-  $fName = filter_var($_POST['first_name'],FILTER_SANITIZE_STRING);
-  $lName = filter_var($_POST['last_name'],FILTER_SANITIZE_STRING);
-  $uName = filter_var($_POST['user_name'],FILTER_SANITIZE_STRING);
-  $email = filter_var($_POST['email'],FILTER_SANITIZE_EMAIL);
-  $email2 = filter_var($_POST['email2'],FILTER_SANITIZE_EMAIL);
-  $password = filter_var($_POST['password'],FILTER_SANITIZE_STRING);
-  $uaccess = filter_var($_POST['user_access'],FILTER_SANITIZE_STRING);
+  $fName = filter_var(trim($_POST['first_name']),FILTER_SANITIZE_STRING);
+  $lName = filter_var(trim($_POST['last_name']),FILTER_SANITIZE_STRING);
+  $uName = filter_var(trim($_POST['user_name']),FILTER_SANITIZE_STRING);
+  $email = filter_var(trim($_POST['email']),FILTER_SANITIZE_EMAIL);
+  $email2 = filter_var(trim($_POST['email2']),FILTER_SANITIZE_EMAIL);
+  $password = filter_var(trim($_POST['password']),FILTER_SANITIZE_STRING);
+  $uaccess = filter_var(trim($_POST['user_access']),FILTER_SANITIZE_STRING);
   $reg_failed = false;
 
   $errors = [];  
@@ -103,7 +105,7 @@ if(filter_has_var(INPUT_POST,'submit')){
     <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -117,27 +119,7 @@ if(filter_has_var(INPUT_POST,'submit')){
   </head>
 
   <body>
- <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#"></a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="index.php">Home</a></li>
-            <li class="active"><a href="register-user.php">Register Users</a></li>
-            <li><a href="edit-users.php">Edit Users</a></li>
-            <li><a href="logout.php?logout=true">Logout</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+  <?php include 'header.php'; ?>
 
     <div class="container">
 
@@ -153,7 +135,7 @@ if(filter_has_var(INPUT_POST,'submit')){
               }
             }else if(isset($_GET['joined'])){ ?>
                <div class="alert alert-info">
-                    <i class="glyphicon glyphicon-log-in"></i> &nbsp; Successfully registered <a href='index.php'>login</a> here
+                    <i class="glyphicon glyphicon-log-in"></i> &nbsp; User has been registered.
                </div>
             <?php } ?>
         <label for="inputfName" class="">First Name</label>
@@ -171,7 +153,7 @@ if(filter_has_var(INPUT_POST,'submit')){
         <label for="inputPassword" class="">User access level</label>
         <select name="user_access" id="inputaccess" class="form-control" required>
         <option value="">Please make a selection</option>
-        <option value="1">Contributer</option>
+        <option value="1">Contributor</option>
         <option value="2">Admin</option>
         </select>
         <button style="margin-top: 15px;" class="btn btn-lg btn-primary btn-block" name="submit" type="submit">Register</button>

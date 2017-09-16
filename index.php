@@ -22,45 +22,60 @@ if($user->is_admin($user_id)){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>CLass Test</title>
+    <title>Projects</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <link href="css/styles.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/projects-script.js"></script>
   </head>
   <body>
-      <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="index.php">Home</a></li>
-            <?php if(isset($admin)){?><li><a href="register-user.php">Register Users</a></li><?php } ?>
-            <?php if(isset($admin)){?><li><a href="edit-users.php">Edit Users</a></li><?php } ?>
-            <li><a href="logout.php?logout=true">Logout</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
-
+  <?php include 'header.php'; ?>
     <div class="container">
 	    <div class="starter-template">
-	    	<h1>Welcome <?php echo $user->getFirstName() .' ' . $user->getLastName();?></h1>
+	    	<h1>Projects Dashboard</h1>
 	    </div>
+      <div class="row">
+        <div id="pro_pipe" class="col-xs-12 col-sm-8 col-md-8">
+          <h3>Project Pipeline</h3>
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                
+                <thead>
+                  <tr>
+                      <th>Project</th>
+                      <th>Website</th>
+                      <th>Assigned To</th>
+                      <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Create Banner</td>
+                    <td>mathslicer</td>
+                    <td>Andy</td>
+                    <td class="text-primary"><span class="glyphicon glyphicon-hand-right"></span> In Progress</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+        </div>
+        <div id="my_pro" class="col-xs-12 col-sm-4 col-md-4">
+        <h3>My Projects <a href="my-projects.php?uid=<?php echo $user_id;?>"><span style="font-size:.9em;">see all &raquo;</span></a></h3>
+        <div id="my_projects">
+          
+          <div class="my_project list-group">
+            <div class="list-group-item">
+              <h4 class="list-group-item-heading">Update Wordpress</h4>
+              <p class="list-group-item-text">Please update the Wordpress Core</p>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary"><a href="add-project.php"><span class="glyphicon glyphicon-plus"></span> Add Project</a></button>
+        </div>
+        </div>
+      </div>
     </div><!-- /.container -->
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

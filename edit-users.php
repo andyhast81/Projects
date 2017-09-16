@@ -1,13 +1,103 @@
 <?php 
 require_once('inc/class.user.php');
+require_once('functions/functions.php');
   if(session_id() == '') {
       session_start();
   }
 $user = new USER();
 $user_id = $_SESSION['user_session'];
-  if(!$user->is_admin($user_id)){
-    $user->redirect('index.php');
-  };
+if(!$user->is_admin($user_id) || !$user->is_loggedin()){
+  $user->redirect('index.php');
+}
+if($user->is_admin($user_id)){
+  $admin = true;
+};
+if(filter_has_var(INPUT_POST,'deleteuser')){
+  $uID = filter_var($_POST['duid'],FILTER_SANITIZE_NUMBER_INT);
+  if($user->deleteUser($uID)){
+    
+    $message = "User has been deleted";
+  
+  }
+}
+
+if(filter_has_var(INPUT_POST,'register')){
+  $uID = filter_var(trim($_POST['user_id']),FILTER_SANITIZE_NUMBER_INT);
+  $fName = filter_var(trim($_POST['first_name']),FILTER_SANITIZE_STRING);
+  $lName = filter_var(trim($_POST['last_name']),FILTER_SANITIZE_STRING);
+  $uName = filter_var(trim($_POST['user_name']),FILTER_SANITIZE_STRING);
+  $email = filter_var(trim($_POST['email']),FILTER_SANITIZE_EMAIL);
+  $password = filter_var(trim($_POST['password']),FILTER_SANITIZE_STRING);
+  $uaccess = filter_var(trim($_POST['user_access']),FILTER_SANITIZE_STRING);
+  $reg_failed = false;
+
+
+  $errors = [];  
+  if($fName == ''){
+    $errors[] = "Please enter your first name.";
+    $reg_failed = true; 
+  }
+  if($lName == ''){
+    $errors[] = "Please enter your last name.";
+    $reg_failed = true; 
+  }
+  if($uName == ''){
+    $errors[] = "Please enter a username.";
+    $reg_failed = true; 
+  }
+  if($email == ''){
+    $errors[] = "Please enter your email address.";
+    $reg_failed = true; 
+  }else{
+    if(filter_var($email, FILTER_VALIDATE_EMAIL) === false){
+      $errors[] = "Please enter a valid email address.";
+      $reg_failed = true; 
+    }
+  }
+  if($password == ''){
+    $pwordempty = false;
+  }
+  if($uaccess == ''){
+    $errors[] = "Please select an access level.";
+    $reg_failed = true; 
+  }
+
+
+  if(!$reg_failed){
+    $stmt = $user->runQuery("SELECT user_name, user_email FROM users WHERE user_id=:uid");
+    $stmt->bindParam(':uid', $uID);
+    $stmt->execute();
+    $row=$stmt->fetch(PDO::FETCH_ASSOC);
+    $currentEmail = $row['user_email'];
+    $currentUsername = $row['user_name'];
+  }
+  if(!$reg_failed){
+    try{
+      $stmt = $user->runQuery("SELECT user_name, user_email FROM users WHERE user_name=:uname OR user_email=:umail");
+      $stmt->execute(array(':uname'=>$uName, ':umail'=>$email));
+      $row=$stmt->fetch(PDO::FETCH_ASSOC);
+        
+      if($row['user_name']==$uName && $currentUsername != $row['user_name']) {
+        $errors[] = "Sorry the username <strong>$uName</strong> is already taken!";
+      }
+      else if($row['user_email']==$email && $currentEmail != $row['user_email']) {
+        $errors[] = 'An account using the email address (<strong>'.$email.'</strong>) already exists!';
+      }else{
+        if($user->updateUser($uID,$fName,$lName,$uName,$email,$password,$uaccess)){ 
+          $message = "User has been updated";
+          
+        }
+      }
+    }
+    catch(PDOException $e){
+      echo $e->getMessage();
+    }
+  }else{
+
+  }
+
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,8 +119,8 @@ $user_id = $_SESSION['user_session'];
     <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/style.css" rel="stylesheet">
-
+    <link href="css/styles.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="js/ie-emulation-modes-warning.js"></script>
@@ -43,32 +133,14 @@ $user_id = $_SESSION['user_session'];
   </head>
 
   <body>
- <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#"></a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="index.php">Home</a></li>
-            <li><a href="register-user.php">Register Users</a></li>
-            <li class="active"><a href="edit-users.php">Edit Users</a></li>
-            <li><a href="logout.php?logout=true">Logout</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+  <?php include 'header.php'; ?>
 
     <div class="container">
+    <?php if(isset($message)){
+      echo '<div class="alert alert-success" role="alert">'.$message.'</div>';
+    }?>
     <h2>Edit Users</h2>
     <?php $results = $user->get_all_users();?>
-    <?php var_dump($results);?>
     <div class="table-responsive">
 	    <table class="table table-striped">
 	    	
@@ -80,6 +152,7 @@ $user_id = $_SESSION['user_session'];
 	    			<th>Email address</th>
 	    			<th>User access level</th>
 	    			<th><span class="glyphicon glyphicon-pencil"></span></th>
+            <th><span class="glyphicon glyphicon-trash"></span></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -92,43 +165,91 @@ $user_id = $_SESSION['user_session'];
 					echo '<td>'.$result['user_name'].'</td>';
 					echo '<td>'.$result['user_email'].'</td>';
 					$tempacc = $result['user_access'];
-					if($tempacc == 1){$tName = 'Basic';}else{$tName = 'Admin';}
+					if($tempacc == 1){$tName = 'Contributor';}else{$tName = 'Admin';}
 					echo '<td>'.$tName.'</td>';
-					echo '<td><button data-uid="'.$uid.'" type="button" class="btn btn-primary">Edit</button></td>';
+					echo '<td><button data-uid="'.$uid.'" data-fname="'.$result['first_name'].'" data-lname="'.$result['last_name'].'" data-uname="'.$result['user_name'].'" data-email="'.$result['user_email'].'" data-uacces="'.$result['user_access'].'" type="button" class="btn btn-primary edit_user" data-toggle="modal" data-target="#edituser">Edit</button></td>';
+          echo '<td>';
+          echo '<button id="del_user" class="btn btn-default" data-toggle="modal" data-target="#deleteuser" data-uid="'.$uid.'" data-fname="'.$result['first_name'].'" data-lname="'.$result['last_name'].'" type="button">Delete</button>';
+          echo '</td>';
 					echo '</tr>';
 				} ?>
 	    	</tbody>
 	    </table>
 	</div>
 
-      <form class="form-signin" action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
-        <h2 class="form-signin-heading">Edit users</h2>
+  <div id="deleteuser" class="modal fade">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Delete user</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger" role="alert"><i class="glyphicon glyphicon-warning-sign"></i> Are you sure you want to delete <strong><span id="del_f_name"></span> <span id="del_l_name"></span></strong>?  This action can't be undone!</div>
+          <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
+          <input type="hidden" id="duId" name="duid" value="">
+          <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button class="btn btn-danger delete_user" name="deleteuser" type="submit" type="button">Delete</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        <label for="inputfName" class="">First Name</label>
-        <input type="text" name="first_name" id="inputfName" class="form-control" value="<?php echo isset($_POST['first_name']) ? $fName : ''; ?>" required autofocus>
-        <label for="inputlName" class="">Last Name</label>
-        <input type="text" name="last_name" id="inputlName" class="form-control" value="<?php echo isset($_POST['last_name']) ? $lName : ''; ?>" required>
-        <label for="inputuName" class="">Username</label>
-        <input type="text" name="user_name" id="inputUName" class="form-control" value="<?php echo isset($_POST['user_name']) ? $uName : ''; ?>" required>
-        <label for="inputEmail" class="">Email address</label>
-        <input type="email" name="email" id="inputEmail" class="form-control" value="<?php echo isset($_POST['email']) ? $email : ''; ?>" required>
-        <label for="inputEmail2" class="">Re-enter email address</label>
-        <input type="email2" name="email2" id="inputEmail2" class="form-control" value="<?php echo isset($_POST['email2']) ? $email2 : ''; ?>" required>
-        <label for="inputPassword" class="">Password</label>
-        <input type="password" name="password" id="inputPassword" class="form-control" value="<?php echo isset($_POST['password']) ? $password : ''; ?>" required>
-        <label for="inputPassword" class="">User access level</label>
-        <select name="user_access" id="inputaccess" class="form-control" required>
-        <option value="">Please make a selection</option>
-        <option value="1">Contributer</option>
-        <option value="2">Admin</option>
-        </select>
-        <button style="margin-top: 15px;" class="btn btn-lg btn-primary btn-block" name="submit" type="submit">Register</button>
-      </form>
+  <div id="edituser" class="modal <?php if(!isset($errors)){?>fade<?php }?>">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Edit user</h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        <?php
+          if(isset($errors)){ 
+            foreach($errors as $error){?>
+              <div class="alert alert-danger">
+                <i class="glyphicon glyphicon-warning-sign"></i> &nbsp; <?php echo $error; ?>
+              </div>
+            <?php
+            }
+            } ?>
+        <form class="form-signin" action="<?php echo $_SERVER['PHP_SELF'];?>" method="post">
+          <input type="hidden" id="uId" name="user_id" value="<?php echo isset($_POST['user_id']) ? $uID : ''; ?>">
+          <label for="inputfName" class="">First Name</label>
+          <input type="text" name="first_name" id="inputfName" class="form-control" value="t_name" id="inputfName" class="form-control" value="<?php echo isset($_POST['first_name']) ? $fName : ''; ?>" autofocus>
+          <label for="inputlName" class="">Last Name</label>
+          <input type="text" name="last_name" id="inputlName" class="form-control" value="<?php echo isset($_POST['last_name']) ? $lName : ''; ?>">
+          <label for="inputuName" class="">Username</label>
+          <input type="text" name="user_name" id="inputUName" class="form-control" value="<?php echo isset($_POST['user_name']) ? $uName : ''; ?>">
+          <label for="inputEmail" class="">Email address</label>
+          <input type="email"  autocomplete="off" name="email" id="inputEmail" class="form-control" value="<?php echo isset($_POST['email']) ? $email : ''; ?>">
+          <label for="inputPassword" class="">Password</label>
+          <p style="font-size:.8em;"><em>only add if you want to change the password</em></p>
+          <input type="password"  autocomplete="off" name="password" id="inputPassword" class="form-control" value="<?php echo isset($_POST['password']) ? $password : ''; ?>">
+          <label for="inputPassword" class="">User access level</label>
+          <select name="user_access" id="inputaccess" class="form-control">
+          <option value="">Please make a selection</option>
+          <option value="1">Contributor</option>
+          <option value="2">Admin</option>
+          </select>
+          <button style="margin-top: 15px;" class="btn btn-lg btn-primary btn-block" name="register" type="submit">Submit Edits</button>
+        </form>
+        </div>
 
+      </div>
+    </div>
+  </div>
     </div> <!-- /container -->
-
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/projects-script.js"></script>
   </body>
 </html>
