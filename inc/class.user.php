@@ -163,6 +163,14 @@ class USER{
 		return $this->user_name;
 	}	
 
+	public function GetUserNameById($uid){
+		$stmt = $this->runQuery("SELECT first_name, last_name FROM users WHERE user_id=:uid");
+		$stmt->execute(array(':uid'=>$uid));
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		$result = $result['first_name'].' '.$result['last_name'];
+		return $result;
+	}
+
 	public function getEmail(){
 		return $this->email;
 	}	

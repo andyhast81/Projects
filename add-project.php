@@ -18,7 +18,7 @@ if($user->is_admin($user_id)){
 };
 if(filter_has_var(INPUT_POST,'create_project')){
   $pname = filter_var(trim($_POST['p_title']),FILTER_SANITIZE_STRING);
-  $pdescription = filter_var($_POST['p_desc'],FILTER_SANITIZE_STRING);
+  $pdescription = nl2br(htmlspecialchars ($_POST['p_desc']));
   $purl = filter_var(trim($_POST['p_url']),FILTER_SANITIZE_URL);
   $pcreated = date('Y-m-d H:i:s');
   $plive = $_POST['daterange'];
@@ -72,7 +72,7 @@ if(filter_has_var(INPUT_POST,'create_project')){
     $ddfilearr = explode(',', $ddfiles);
   }
 
-  
+  $purl = '';
   if($pname == ''){
     $errors[] = "Please enter a title for the project.";
   }
@@ -82,7 +82,7 @@ if(filter_has_var(INPUT_POST,'create_project')){
   if(count($errors) == 0){
     try{
 
-        if($project->createProject($pname,$pdescription,$pcreated,$newdate,$pmod,$purl,$user_id)){ 
+        if($project->createProject($pname,$pdescription,$purl,$pcreated,$newdate,$pmod,$purl,$user_id)){ 
           if(isset($ddfilearr)){
             try{
               $stmt = $user->runQuery("SELECT MAX(project_id) FROM projects");
@@ -172,7 +172,7 @@ if(filter_has_var(INPUT_POST,'create_project')){
         </div>
 
         <div class="form-group">
-          <label for="pro_desc">Project Description (please be expain in detail)</label>
+          <label for="pro_desc">Project Description (please expain in detail)</label>
           <textarea  rows="15" class="form-control" id="pro_desc" name="p_desc" required></textarea>
         </div>
         <div class="form-group">

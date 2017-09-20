@@ -1,10 +1,13 @@
 <?php 
 include_once 'inc/class.user.php';
+include_once 'inc/class.projects.php';
+include_once 'functions/functions.php';
 if(session_id() == '') {
     session_start();
 }
 
 $user = new USER();
+$projects = new PROJECT();
 
 if(!$user->is_loggedin()){
 	$user->redirect('login.php');
@@ -45,18 +48,49 @@ if($user->is_admin($user_id)){
                 <thead>
                   <tr>
                       <th>Project</th>
-                      <th>Website</th>
                       <th>Assigned To</th>
                       <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  <?php 
+                    $results = $projects->GetProjectPipline();
+                    
+                    foreach ($results as $result) {
+                      $pid = $result['project_id'];
+
+                      echo '<tr>';
+                      echo '<td><a href="view-project.php?pid='.$pid.'">'.$result['project_name'].'</a></td>';
+                      $assigned = $user->GetUserNameById($result['assigned_to']);
+                      echo '<td>'.$assigned.'</td>';
+                      switch ($result['project_status']) {
+                      
+                        case 0:
+                          echo '<td class="text-primary"><span class="glyphicon glyphicon-hand-right"></span> In Progress</td>';
+                          break;
+                          case 1:
+                          echo '<td class="text-warning"><span class="glyphicon glyphicon-option-horizontal"></span> In Queue</td>';
+                          break;
+                          case 2:
+                          echo '<td class="text-success"><span class="glyphicon glyphicon-thumbs-up"></span> Complete</td>';
+                          break;
+                          case 3:
+                          echo '<td class="text-danger"><span class="glyphicon glyphicon-minus-sign"></span> Canceled</td>';
+                          break;                        
+                        default:
+                          echo '<td class="text-warning"><span class="glyphicon glyphicon-option-horizontal"></span> In Queue</td>';
+                          break;
+                      }
+
+                      echo '</tr>';
+                    }
+                  ?>
+                  <!-- <tr>
                     <td>Create Banner</td>
                     <td>mathslicer</td>
                     <td>Andy</td>
                     <td class="text-primary"><span class="glyphicon glyphicon-hand-right"></span> In Progress</td>
-                  </tr>
+                  </tr> -->
                 </tbody>
               </table>
             </div>

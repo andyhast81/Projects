@@ -13,14 +13,15 @@ class PROJECT{
 		return $stmt;
 	}
 
-	public function createProject($pname,$pdesc,$pdcreate,$pdlive,$pdmod,$aurl,$puid){
+	public function createProject($pname,$pdesc,$purl,$pdcreate,$pdlive,$pdmod,$aurl,$puid){
 		try{
 
-			$stmt = $this->conn->prepare("INSERT INTO projects(project_name,project_description,date_created,live_date,date_modified,asset_url,user_id) 
-		                                               VALUES(:pname, :pdesc, :pdcreate, :pdlive, :pdmod,:aurl, :puid)");
+			$stmt = $this->conn->prepare("INSERT INTO projects(project_name,project_description,project_url,date_created,live_date,date_modified,asset_url,user_id) 
+		                                               VALUES(:pname, :pdesc, :purl, :pdcreate, :pdlive, :pdmod,:aurl, :puid)");
 												  
 			$stmt->bindparam(":pname", $pname);
 			$stmt->bindparam(":pdesc", $pdesc);
+			$stmt->bindparam(":purl", $purl);
 			$stmt->bindparam(":pdcreate", $pdcreate);
 			$stmt->bindparam(":pdlive", $pdlive);
 			$stmt->bindparam(":pdmod", $pdmod);										  
@@ -56,5 +57,20 @@ class PROJECT{
 		catch(PDOException $e){
 			echo $e->getMessage();
 		}			
+	}
+
+	public function GetProjectPipline(){
+		$stmt = $this->runQuery("SELECT project_id, project_name, project_status, assigned_to FROM projects ORDER BY project_status");
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		return $result;
+	}
+
+	public function ViewProject($pid){
+		$stmt = $this->runQuery("SELECT * FROM projects WHERE project_id=:pid");
+		$stmt->execute(array(':pid'=>$pid));
+		$stmt->execute();
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		return $result;
 	}
 }

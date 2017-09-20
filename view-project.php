@@ -1,10 +1,16 @@
 <?php 
 include_once 'inc/class.user.php';
+include_once 'inc/class.projects.php';
+include_once 'functions/functions.php';
 if(session_id() == '') {
     session_start();
 }
 
 $user = new USER();
+$projects = new PROJECT();
+$pid = $_GET['pid'];
+
+$project = $projects->ViewProject($pid);
 
 if(!$user->is_loggedin()){
   $user->redirect('login.php');
@@ -22,19 +28,55 @@ if($user->is_admin($user_id)){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Add Project</title>
+    <title>View Project</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript" src="js/projects-scripts.js"></script>
+    <script type="text/javascript" src="js/projects-script.js"></script>
   </head>
   <body>
   <?php include 'header.php'; ?>
 
+    <div class="container-fluid bg-primary text-white">
+      
+        
+        <h1><?php echo $project['project_name'];?></h1>
+        <?php $date=date_create($project['date_created']);?>
+        <p style="padding-left:20px;font-size:.9em;">Created on <span><?php echo date_format($date, 'm/d/Y');?></span> submitted by <span><?php echo $user->GetUserNameById($project['assigned_to']);?></span></p>
+      
+    </div>
 
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <div class="container mt-4 col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h4>Project description</h4>
+        </div>
+        <div class="card-block">
+          
+          <p class="card-text"><?php echo $project['project_description'];?></p>
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="container col-md-4">
+      <div class="mt-4">
+        <div class="card">
+          <div class="card-header">
+            <h4><span class="glyphicon glyphicon-list-alt"></span> Additional notes <a href="#" class="btn btn-primary btn-sm f_right"><span class="glyphicon glyphicon-plus"></span> Add note</a></h4>
+          </div>
+          <div class="card-block">
+
+                <p style="padding:20px;" class="col-lg-10 card-text my_note bg-success"><strong>Andy</strong><br><?php echo $project['project_description'];?></p>
+                <p style="padding:20px;" class="col-lg-10 card-text other_note bg-info"><strong>Andy</strong><br><?php echo $project['project_description'];?></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.js"></script>
   </body>
