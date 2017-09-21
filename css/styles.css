@@ -78,3 +78,13 @@ h1, .h1, h2, .h2, h3, .h3 {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+#notes_content{
+  overflow-y: scroll;
+}
+#add_note_div{
+  display: none;
+  margin-bottom: 10px;
+}
+#note_text{
+  margin-bottom: 10px;
+}

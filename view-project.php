@@ -35,6 +35,7 @@ if($user->is_admin($user_id)){
     <link href="css/styles.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/projects-script.js"></script>
+    <script type="text/javascript" src="js/view-project.js"></script>
   </head>
   <body>
   <?php include 'header.php'; ?>
@@ -47,8 +48,10 @@ if($user->is_admin($user_id)){
         <p style="padding-left:20px;font-size:.9em;">Created on <span><?php echo date_format($date, 'm/d/Y');?></span> submitted by <span><?php echo $user->GetUserNameById($project['assigned_to']);?></span></p>
       
     </div>
+    <div class="mt-4 col-md-1">
 
-    <div class="container mt-4 col-md-8">
+    </div>
+    <div class="mt-4 col-md-7">
       <div class="card">
         <div class="card-header">
           <h4>Project description</h4>
@@ -61,16 +64,20 @@ if($user->is_admin($user_id)){
       </div>
     </div>
 
-    <div class="container col-md-4">
+    <div class="col-md-4" style="padding-left:0;">
       <div class="mt-4">
         <div class="card">
           <div class="card-header">
-            <h4><span class="glyphicon glyphicon-list-alt"></span> Additional notes <a href="#" class="btn btn-primary btn-sm f_right"><span class="glyphicon glyphicon-plus"></span> Add note</a></h4>
+            <h4><span class="glyphicon glyphicon-list-alt"></span> Additional notes <button id="add_note" class="btn btn-primary btn-sm f_right"><span class="glyphicon glyphicon-plus"></span> Add note</button></h4>
           </div>
-          <div class="card-block">
-
-                <p style="padding:20px;" class="col-lg-10 card-text my_note bg-success"><strong>Andy</strong><br><?php echo $project['project_description'];?></p>
-                <p style="padding:20px;" class="col-lg-10 card-text other_note bg-info"><strong>Andy</strong><br><?php echo $project['project_description'];?></p>
+          <div id="notes_content" class="card-block">
+            <div id="add_note_div" class="clearfix">
+              <textarea  rows="5" class="form-control" id="note_text" name="p_desc"></textarea>
+              <button style="margin-left:5px;" id="submit_note" class="btn btn-primary btn-sm f_right"><span class="glyphicon glyphicon-cloud-upload"></span> Submit note</button>
+              <button id="cancel_note" class="btn btn-primary btn-sm f_right"><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>
+            </div>
+              <p style="padding:20px;" class="col-lg-10 card-text my_note bg-success"><strong>Andy</strong> - Today at 12:03pm<br><?php echo $project['project_description'];?></p>
+              <p style="padding:20px;" class="col-lg-10 card-text other_note bg-info f_right"><strong>Andy</strong> - Yesterday at 3:30pm<br><?php echo $project['project_description'];?></p>
           </div>
         </div>
       </div>
