@@ -88,3 +88,9 @@ h1, .h1, h2, .h2, h3, .h3 {
 #note_text{
   margin-bottom: 10px;
 }
+#notes p{
+  clear: both;
+}
+.new_note{
+  display: none;
+}

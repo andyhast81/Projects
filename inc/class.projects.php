@@ -1,5 +1,5 @@
 <?php 
-require_once('inc/db.php');
+require_once('db.php');
 class PROJECT{
 	private $conn;
 	function __construct(){
@@ -72,5 +72,36 @@ class PROJECT{
 		$stmt->execute();
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
 		return $result;
+	}
+
+	public function AddNote($date,$userId,$assignedTo,$projectId,$cleanNote){
+		try{
+
+			$stmt = $this->conn->prepare("INSERT INTO project_updates(update_date,user_id,assigned_id,project_id,update_text) 
+		                VALUES(:udate, :uid, :aid, :pid, :utext)");
+												  
+			$stmt->bindparam(":udate", $date);
+			$stmt->bindparam(":uid", $userId);
+			$stmt->bindparam(":aid", $assignedTo);
+			$stmt->bindparam(":pid", $projectId);
+			$stmt->bindparam(":utext", $cleanNote);										  
+				
+			$stmt->execute();	
+			
+			return $stmt;	
+		}
+		catch(PDOException $e){
+			echo $e->getMessage();
+		}	
+	}
+
+	public function GetNotes($pid){
+
+		$stmt = $this->runQuery("SELECT * FROM project_updates WHERE project_id=:pid");
+		$stmt->execute(array(':pid'=>$pid));
+		$stmt->execute();
+		$result = $stmt->fetchAll();
+		return $result;
+
 	}
 }

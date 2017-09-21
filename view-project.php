@@ -73,11 +73,15 @@ if($user->is_admin($user_id)){
           <div id="notes_content" class="card-block">
             <div id="add_note_div" class="clearfix">
               <textarea  rows="5" class="form-control" id="note_text" name="p_desc"></textarea>
-              <button style="margin-left:5px;" id="submit_note" class="btn btn-primary btn-sm f_right"><span class="glyphicon glyphicon-cloud-upload"></span> Submit note</button>
+              <button data-user="<?php echo $user_id;?>" data-assigned="<?php echo $project['assigned_to'];?>" data-project-id="<?php echo $pid;?>" style="margin-left:5px;" id="submit_note" class="btn btn-primary btn-sm f_right"><span class="glyphicon glyphicon-cloud-upload"></span> Submit note</button>
               <button id="cancel_note" class="btn btn-primary btn-sm f_right"><span class="glyphicon glyphicon-remove-circle"></span> Cancel</button>
             </div>
-              <p style="padding:20px;" class="col-lg-10 card-text my_note bg-success"><strong>Andy</strong> - Today at 12:03pm<br><?php echo $project['project_description'];?></p>
-              <p style="padding:20px;" class="col-lg-10 card-text other_note bg-info f_right"><strong>Andy</strong> - Yesterday at 3:30pm<br><?php echo $project['project_description'];?></p>
+            <div id="notes" class="clearfix">
+              <?php $pageNotes = $projects->GetNotes($pid);
+              PreDump($pageNotes);?>
+              <!-- <p style="padding:20px;" class="col-lg-10 card-text my_note bg-success"><strong>Andy</strong> - Today at 12:03pm<br><?php //echo $project['project_description'];?></p>
+              <p style="padding:20px;" class="col-lg-10 card-text other_note bg-info f_right"><strong>Andy</strong> - Yesterday at 3:30pm<br><?php //echo $project['project_description'];?></p> -->
+            </div>
           </div>
         </div>
       </div>

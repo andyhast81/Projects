@@ -20,14 +20,33 @@ $(function() {
 
 	$('#submit_note').click(function(){
 
-		noteText = $('#note_text').val();
+		var noteText = $('#note_text').val();
+		var uid = $('#submit_note').attr('data-user');
+		var assigned = $('#submit_note').attr('data-assigned');
+		var pid = $('#submit_note').attr('data-project-id');
 
-		$.ajax({ url: '/inc/add-note.php',
+		$('#note_text').val('');
+		$('#add_note_div').slideToggle();
+
+		$.ajax({ url: 'inc/add-note.php',
 		         type: "POST",
-		         dataType:'json',
-		         data: ({note: noteText}),
-		         success: function(data) {
-		                      alert(data);
+		         data: ({note: noteText,userId: uid, assignedTo: assigned, projectId:pid}),
+		         success: function(response) {
+		         	// console.log(response);
+					var newNote = JSON.parse(response);
+					var date = newNote[0];
+					var tempNote = newNote[1];
+					var html = '<p style="padding:20px;" class="col-lg-10 card-text my_note bg-success new_note"><strong>Me</strong> - Today at ';
+					html += date;
+					html += '<br>';
+					html += tempNote;
+					html += '</p>';
+
+					$('#notes').prepend(html);
+					$('.new_note').slideToggle();
+					$('.new_note').removeClass('new_note');
+
+
 		        }
 		});
 	});
