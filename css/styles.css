@@ -82,7 +82,7 @@ h1, .h1, h2, .h2, h3, .h3 {
   overflow-y: scroll;
 }
 #add_note_div{
-  display: none;
+  /*display: none;*/
   margin-bottom: 10px;
 }
 #note_text{
@@ -98,13 +98,13 @@ h1, .h1, h2, .h2, h3, .h3 {
 
 
 .animated {
-  animation-duration: 1s; 
+  animation-duration: .7s; 
   animation-fill-mode: both;
 }
-@keyframes fadeInLeft {
+@keyframes fadeInRight {
   from {
     opacity: 0;
-    transform: translate3d(-100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
   }
 
   to {
@@ -113,6 +113,6 @@ h1, .h1, h2, .h2, h3, .h3 {
   }
 }
 
-.fadeInLeft {
-  animation-name: fadeInLeft;
+.fadeInRight {
+  animation-name: fadeInRight;
 }

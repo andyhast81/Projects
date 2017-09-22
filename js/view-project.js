@@ -9,13 +9,13 @@ $(function() {
 
 //====================-- adding a note --=====================================//
 
-	$('#add_note').click(function(){
-		$('#add_note_div').slideToggle();
-	});
+	// $('#add_note').click(function(){
+	// 	$('#add_note_div').slideToggle();
+	// });
 
 	$('#cancel_note').click(function(){
 		$('#note_text').val('');
-		$('#add_note_div').slideToggle();
+		// $('#add_note_div').slideToggle();
 	});
 
 	$('#submit_note').click(function(){
@@ -26,9 +26,13 @@ $(function() {
 		var pid = $('#submit_note').attr('data-project-id');
 
 		$('#note_text').val('');
-		$('#add_note_div').slideToggle();
+		// $('#add_note_div').slideToggle();
+		addNote(noteText,uid,assigned,pid);
 
-		$.ajax({ url: 'inc/add-note.php',
+	});
+
+	function addNote(noteText,uid,assigned,pid){
+				$.ajax({ url: 'inc/add-note.php',
 		         type: "POST",
 		         data: ({note: noteText,userId: uid, assignedTo: assigned, projectId:pid}),
 		         success: function(response) {
@@ -36,7 +40,7 @@ $(function() {
 					var newNote = JSON.parse(response);
 					var date = newNote[0];
 					var tempNote = newNote[1];
-					var html = '<p style="padding:20px;" class="col-lg-10 card-text my_note bg-success new_note"><strong>Me</strong> - Today at ';
+					var html = '<p style="padding:20px;" class="col-lg-10 card-text my_note bg-success new_note fadeInRight animated"><strong>Me</strong> - today at ';
 					html += date;
 					html += '<br>';
 					html += tempNote;
@@ -49,7 +53,8 @@ $(function() {
 
 		        }
 		});
-	});
+	}
+
 //====================-- end adding a note --==================================//
 
 });

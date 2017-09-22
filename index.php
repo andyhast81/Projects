@@ -106,7 +106,7 @@ if($user->is_admin($user_id)){
               <p class="list-group-item-text">Please update the Wordpress Core</p>
             </div>
           </div>
-          <button type="button" class="btn btn-primary"><a href="add-project.php"><span class="glyphicon glyphicon-plus"></span> Add Project</a></button>
+          <a class="btn btn-primary" href="add-project.php"><span class="glyphicon glyphicon-plus"></span> Add Project</a>
         </div>
         </div>
       </div>
