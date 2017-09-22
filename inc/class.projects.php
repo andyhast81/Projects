@@ -97,7 +97,7 @@ class PROJECT{
 
 	public function GetNotes($pid){
 
-		$stmt = $this->runQuery("SELECT * FROM project_updates WHERE project_id=:pid");
+		$stmt = $this->runQuery("SELECT * FROM project_updates WHERE project_id=:pid ORDER BY update_date DESC");
 		$stmt->execute(array(':pid'=>$pid));
 		$stmt->execute();
 		$result = $stmt->fetchAll();

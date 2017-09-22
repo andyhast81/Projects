@@ -78,7 +78,19 @@ if($user->is_admin($user_id)){
             </div>
             <div id="notes" class="clearfix">
               <?php $pageNotes = $projects->GetNotes($pid);
-              PreDump($pageNotes);?>
+              //PreDump($pageNotes);
+              foreach ($pageNotes as $note) {
+                $nid = $note['user_id'];
+                $nDate = get_day_name($note['update_date']);
+                if($nid == $user_id){ ?>
+                  <p style="padding:20px;" class="col-lg-10 card-text my_note bg-success fadeInLeft animated"><strong>Me</strong> - <?php echo $nDate;?> <br><?php echo $note['update_text'];?></p>
+                <?php }else{ 
+                  $nName = $user->GetUserNameById($nid); ?>
+                  <p style="padding:20px;" class="col-lg-10 card-text other_note bg-info f_right fadeInLeft animated"><strong><?php echo $nName;?></strong> - <?php echo $nDate;?><br><?php echo $note['update_text'];?></p>
+                <?php } ?>
+
+              <?php } ?>
+              
               <!-- <p style="padding:20px;" class="col-lg-10 card-text my_note bg-success"><strong>Andy</strong> - Today at 12:03pm<br><?php //echo $project['project_description'];?></p>
               <p style="padding:20px;" class="col-lg-10 card-text other_note bg-info f_right"><strong>Andy</strong> - Yesterday at 3:30pm<br><?php //echo $project['project_description'];?></p> -->
             </div>
